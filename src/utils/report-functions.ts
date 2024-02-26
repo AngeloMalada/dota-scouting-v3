@@ -1,12 +1,5 @@
 import { stats } from './hero_stats2.ts';
-import {
-	player as asension,
-	params as month,
-	playerRole as carry,
-	weights,
-	flex,
-	meta,
-} from './consts.ts';
+import { weights, flex, meta } from './consts.ts';
 import { HeroData, ParamsData, StatData, WeightsData } from './types.ts';
 
 export async function getPlayerReport(
@@ -62,6 +55,7 @@ async function adjustBasedOnPlayerMedal(
 		hero.points = (2 * hero.points * winrate) / pickrate;
 		hero.avatar = playerMedal.avatar;
 		hero.personaname = playerMedal.personaname;
+		hero.accountid = playerMedal.accountid;
 	});
 	return heroes;
 }
@@ -87,7 +81,9 @@ async function adjustPointsBasedOnMeta(
 			(stat) => stat.id === hero.hero_id
 		) as unknown as StatData;
 		hero.points = hero.points * (stat.pro_pick + stat.pro_ban);
+		hero.points = Math.floor(hero.points);
 	});
+	setTimeToJS(heroes);
 	return heroes.sort((a, b) => {
 		return b.points - a.points;
 	});
@@ -112,7 +108,12 @@ async function getHeroName(
 	});
 	return heroes;
 }
-
+async function setTimeToJS(heroes: HeroData[]) {
+	heroes.map((hero) => {
+		hero.last_played = hero.last_played * 1000;
+	});
+	return heroes;
+}
 async function get_player_medal(account_id: number) {
 	const url = `${process.env.NEXT_PUBLIC_OPENDOTA_URL}/players/${account_id}`;
 	const response = await fetch(url);
@@ -120,6 +121,7 @@ async function get_player_medal(account_id: number) {
 	return {
 		rank_tier: Math.floor(data.rank_tier / 10),
 		personaname: data.profile.personaname,
+		accountid: data.profile.account_id,
 		avatar: data.profile.avatarfull,
 	};
 }

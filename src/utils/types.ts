@@ -12,6 +12,7 @@ export type HeroData = {
 	personaname: string;
 	hero_name: string;
 	image: string;
+	accountid: string;
 };
 
 export type ParamsData = {
