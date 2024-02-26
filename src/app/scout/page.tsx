@@ -16,19 +16,25 @@ export default async function ScoutReport({
 		data.push(id);
 	});
 
+	let errorMsg = '';
+
 	let map: any = [];
 
 	await Promise.all(
 		data.map(async (id, index) => {
-			const playerData = await getPlayerReport(
-				parseInt(id.split('-')[0]),
-				{ lobby_type: searchParams.lobby_type, date: searchParams.date },
-				parseInt(id.split('-')[1])
-			);
-			if (playerData.length > 0) {
-				map.push(playerData);
-			} else {
-				delete data[index];
+			try {
+				const playerData = await getPlayerReport(
+					parseInt(id.split('-')[0]),
+					{ lobby_type: searchParams.lobby_type, date: searchParams.date },
+					parseInt(id.split('-')[1])
+				);
+				if (playerData.length > 0) {
+					map.push(playerData);
+				} else {
+					delete data[index];
+				}
+			} catch (error: any) {
+				errorMsg = error.stack;
 			}
 		})
 	);
@@ -48,7 +54,7 @@ export default async function ScoutReport({
 
 	return (
 		<main className='flex min-h-screen flex-col items-center justify-between p-24 dark'>
-			<PlayerReport heroes={map} data={data} />
+			{!errorMsg ? <PlayerReport heroes={map} data={data} /> : 'Server Error'}
 		</main>
 	);
 }
