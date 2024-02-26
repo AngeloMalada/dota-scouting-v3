@@ -15,19 +15,34 @@ export default async function ScoutReport({
 		data.push(id);
 	});
 
-	const map: any = [];
+	let map: any = [];
 
-	data.map(async (id, index) => {
-		const playerData = await getPlayerReport(
-			parseInt(id.split('-')[0]),
-			{ lobby_type: 7, date: 30 },
-			parseInt(id.split('-')[1])
+	await Promise.all(
+		data.map(async (id, index) => {
+			const playerData = await getPlayerReport(
+				parseInt(id.split('-')[0]),
+				{ lobby_type: 7, date: 30 },
+				parseInt(id.split('-')[1])
+			);
+			if (playerData.length > 0) {
+				map.push(playerData);
+			} else {
+				delete data[index];
+			}
+		})
+	);
+	map.sort((a: HeroData[], b: HeroData[]) => {
+		const accountIdA = a[0].accountid;
+		const accountIdB = b[0].accountid;
+
+		const orderIndexA = data.findIndex((item) =>
+			item.startsWith(`${accountIdA}-`)
 		);
-		if (playerData.length > 0) {
-			map.push(playerData);
-		} else {
-			delete data[index];
-		}
+		const orderIndexB = data.findIndex((item) =>
+			item.startsWith(`${accountIdB}-`)
+		);
+
+		return orderIndexA - orderIndexB;
 	});
 
 	return (

@@ -15,14 +15,16 @@ const PlayerReport: React.FC<{
 	return (
 		<div className='flex flex-col w-[100vw] px-2 md:w-full dark'>
 			<Tabs aria-label='Options'>
-				{heroes.map((hero, index) => (
-					<Tab
-						key={matchAccountId(filteredData[index], hero[0])}
-						title={matchAccountId(filteredData[index], hero[0])}
-					>
-						<TableComponent heroes={hero} />
-					</Tab>
-				))}
+				{heroes.map((hero, index) => {
+					return (
+						<Tab
+							key={matchAccountId(filteredData[index], hero[0])}
+							title={matchAccountId(filteredData[index], hero[0])}
+						>
+							<TableComponent heroes={hero} />
+						</Tab>
+					);
+				})}
 				<Tab title='All'>
 					<AllPlayersTableComponent heroes={flatHeroes} />
 				</Tab>
@@ -41,6 +43,7 @@ function matchAccountId(accountId: string, hero: HeroData) {
 	if (accountId.split('-')[0] == hero.accountid) {
 		return `${hero.personaname} - ${Role[parseInt(accountId.split('-')[1])]}`;
 	}
+	return 'hello'; // Return a default value if the condition is not met
 }
 
 const Role: { [key: number]: string } = {

@@ -116,7 +116,7 @@ async function setTimeToJS(heroes: HeroData[]) {
 }
 async function get_player_medal(account_id: number) {
 	const url = `${process.env.NEXT_PUBLIC_OPENDOTA_URL}/players/${account_id}`;
-	const response = await fetch(url);
+	const response = await fetch(url, { cache: 'no-store' });
 	const data = await response.json();
 	return {
 		rank_tier: Math.floor(data.rank_tier / 10),
