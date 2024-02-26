@@ -1,6 +1,5 @@
 import { getPlayerReport } from '@/utils/report-functions';
 import PlayerReport from '../_components/player-report';
-import { useSearchParams } from 'next/navigation';
 import { HeroData } from '@/utils/types';
 
 export default async function ScoutReport({
@@ -8,6 +7,8 @@ export default async function ScoutReport({
 }: Readonly<{
 	searchParams: {
 		accountIDs: string;
+		lobby_type: number;
+		date: number;
 	};
 }>) {
 	const data: string[] = [];
@@ -21,7 +22,7 @@ export default async function ScoutReport({
 		data.map(async (id, index) => {
 			const playerData = await getPlayerReport(
 				parseInt(id.split('-')[0]),
-				{ lobby_type: 7, date: 30 },
+				{ lobby_type: searchParams.lobby_type, date: searchParams.date },
 				parseInt(id.split('-')[1])
 			);
 			if (playerData.length > 0) {
