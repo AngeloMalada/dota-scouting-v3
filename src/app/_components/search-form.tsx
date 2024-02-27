@@ -28,7 +28,7 @@ const SearchFrom: React.FC = () => {
 				onSubmit={handleSubmit(onSubmit)}
 				className='flex flex-col items-center gap-4 w-full'
 			>
-				<div className='flex flex-row gap-4 w-full'>
+				<div className='flex flex-col md:flex-row gap-4 w-full'>
 					<Input
 						type='text'
 						label='Enter account IDs'
@@ -52,7 +52,7 @@ const SearchFrom: React.FC = () => {
 						maxValue={1000}
 						minValue={1}
 						defaultValue={30}
-						className=' w-1/2'
+						className=' w-full md:w-1/2'
 						color='foreground'
 						{...register('date')}
 						onChange={(value) => {}}
