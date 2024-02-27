@@ -84,7 +84,8 @@ async function adjustPointsBasedOnMeta(
 		hero.points = Math.floor(hero.points);
 	});
 	setTimeToJS(heroes);
-	return heroes.sort((a, b) => {
+	normalizePoints(heroes);
+	return removeHeroesWithNoPoints(heroes).sort((a, b) => {
 		return b.points - a.points;
 	});
 }
@@ -148,4 +149,18 @@ async function calculateWeightf(weights: WeightsData, flex: number) {
 	}
 
 	return weightsf;
+}
+
+async function normalizePoints(heroes: HeroData[]) {
+	const sum = heroes.reduce((acc, hero) => {
+		return acc + hero.points;
+	}, 0);
+	heroes.map((hero) => {
+		hero.points = Math.round((hero.points / sum) * 1000);
+	});
+	return heroes;
+}
+
+function removeHeroesWithNoPoints(heroes: HeroData[]) {
+	return heroes.filter((hero) => hero.points > 0);
 }
