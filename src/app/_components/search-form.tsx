@@ -43,10 +43,16 @@ const SearchFrom: React.FC = () => {
 		},
 	});
 	const onSubmit: SubmitHandler<z.infer<typeof searchSchema>> = (data) => {
+		data.players = data.players.filter(
+			(player, index, self) =>
+				index ===
+				self.findIndex((t) => t.id === player.id && t.role === player.role)
+		);
+		const concat = data.players
+			.map((player) => `${player.id}-${player.role}`)
+			.join(',');
 		router.push(
-			`/scout/?accountIDs=${data.players
-				.map((player) => `${player.id}-${player.role}`)
-				.join(',')}&lobby_type=${data.lobby_type}&date=${data.date}`
+			`/scout/?accountIDs=${concat}&lobby_type=${data.lobby_type}&date=${data.date}`
 		);
 	};
 	const { fields, append, remove } = useFieldArray({
