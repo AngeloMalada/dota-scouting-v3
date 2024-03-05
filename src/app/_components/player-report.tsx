@@ -4,6 +4,7 @@ import { Tabs, Tab, Card, CardBody } from '@nextui-org/react';
 import { HeroData } from '@/utils/types';
 import TableComponent from './table-component';
 import AllPlayersTableComponent from './all-players-table';
+import { Role } from '@/utils/consts';
 
 const PlayerReport: React.FC<{
 	heroes: Readonly<HeroData[][]>;
@@ -45,11 +46,3 @@ function matchAccountId(accountId: string, hero: HeroData) {
 	}
 	return 'hello'; // Return a default value if the condition is not met
 }
-
-const Role: { [key: number]: string } = {
-	1: 'Carry',
-	2: 'Mid',
-	3: 'Offlane',
-	4: 'Support',
-	5: 'Hard Support',
-} as const;
