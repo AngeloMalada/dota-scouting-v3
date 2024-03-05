@@ -1,54 +1,57 @@
 'use client';
-import { Input, Button, Slider } from '@nextui-org/react';
+import { Input, Button, Slider, Select, SelectItem } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React from 'react';
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
-import { Select, SelectItem } from '@nextui-org/react';
 import { Role } from '@/utils/consts';
-type Inputs = {
-	accountIDs: { value: string }[];
-	roles: { value: string }[];
-	lobby_type: string;
-	date: number;
-};
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const searchSchema = z.object({
+	players: z.array(
+		z.object({
+			id: z.string().min(1, 'Account ID is required'),
+			role: z
+				.string()
+				.min(1, 'Role is required')
+				.max(1, 'Role is single digit number'),
+		})
+	),
+	lobby_type: z
+		.string()
+		.min(1, 'Lobby type is required')
+		.max(1, 'Lobby type single digit number'),
+	date: z
+		.number()
+		.min(1, 'Date is required')
+		.max(1000, 'Max date is 1000 days in the past'),
+});
 
 const SearchFrom: React.FC = () => {
-	const [numberOfFields, setNumberOfFields] = useState<number>(1);
 	const router = useRouter();
 	const {
 		control,
 		register,
 		handleSubmit,
-		watch,
-		formState: { errors },
-	} = useForm<Inputs>();
-	const onSubmit: SubmitHandler<Inputs> = (data) => {
-		const ids = concatIdsWithRoles(data.accountIDs as [], data.roles as []);
+		formState: { errors, isSubmitting },
+	} = useForm({
+		resolver: zodResolver(searchSchema),
+		defaultValues: {
+			players: [{ id: '', role: '' }],
+			lobby_type: '7',
+			date: 30,
+		},
+	});
+	const onSubmit: SubmitHandler<z.infer<typeof searchSchema>> = (data) => {
 		router.push(
-			`/scout/?accountIDs=${ids}&lobby_type=${data.lobby_type}&date=${data.date}`
+			`/scout/?accountIDs=${data.players
+				.map((player) => `${player.id}-${player.role}`)
+				.join(',')}&lobby_type=${data.lobby_type}&date=${data.date}`
 		);
 	};
-	function concatIdsWithRoles(
-		ids: { value: string }[],
-		roles: { value: string }[]
-	) {
-		return ids
-			.map((id, index) => {
-				if (id.value !== '') {
-					return `${id.value}-${roles[index].value}`;
-				}
-				return '';
-			})
-			.filter((value) => value !== '')
-			.join(',');
-	}
-	const { append } = useFieldArray<Inputs>({
+	const { fields, append, remove } = useFieldArray({
 		control,
-		name: 'accountIDs',
-	});
-	const { fields: rolesFields, append: rolesAppend } = useFieldArray({
-		control,
-		name: 'roles',
+		name: 'players',
 	});
 	return (
 		<div className='flex w-full md:w-1/2 flex-wrap md:flex-nowrap gap-4'>
@@ -77,35 +80,64 @@ const SearchFrom: React.FC = () => {
 				/>
 				<button
 					className='bg-[#252525] p-4 rounded-xl text-foreground'
-					onClick={() => setNumberOfFields((prev) => prev + 1)}
+					onClick={() => append({ id: '', role: '' })}
 					type='button'
 				>
 					Add new
 				</button>
-				<div className='w-full flex flex-col gap-2'>
-					{Array.from({ length: numberOfFields }, (_, index) => (
-						<div key={index} className='flex flex-row gap-2 w-full'>
-							<Input
-								key={index}
-								{...register(`accountIDs.${index}.value`)}
-								placeholder='Account ID'
-							/>
-							<Select
-								key={index}
-								{...register(`roles.${index}.value`)}
-								className='w-48'
-								label='Role'
-							>
-								{Object.entries(Role).map(([key, value]) => (
-									<SelectItem key={key} value={key}>
-										{value}
-									</SelectItem>
-								))}
-							</Select>
+				<div className='w-full flex flex-col gap-6'>
+					{fields.map((field, index) => (
+						<div key={field.id} className='flex flex-row gap-2 w-full'>
+							<div className='w-full flex flex-col gap-2'>
+								<Input
+									{...register(`players.${index}.id` as const)}
+									placeholder='Account ID'
+								/>
+								{errors.players?.[index]?.id && (
+									<span className='text-foreground font-extrabold text-lg'>
+										{errors.players[index]?.id?.message}
+									</span>
+								)}
+							</div>
+							<div className='flex flex-col gap-2'>
+								<Select
+									{...register(`players.${index}.role` as const)}
+									className='w-48'
+									label='Role'
+								>
+									{Object.entries(Role).map(([key, value]) => (
+										<SelectItem key={key} value={key}>
+											{value}
+										</SelectItem>
+									))}
+								</Select>
+								{errors.players?.[index]?.id && (
+									<span className='text-foreground font-extrabold text-lg'>
+										{errors.players[index]?.role?.message}
+									</span>
+								)}
+							</div>
+
+							<div className='w-36'>
+								{!!index ? (
+									<button
+										className='bg-[#252525] p-4 rounded-xl text-foreground'
+										onClick={() => remove(index)}
+										type='button'
+									>
+										Remove
+									</button>
+								) : null}
+							</div>
 						</div>
 					))}
 				</div>
-				<Button size='md' type='submit' className='bg-[#252525]'>
+				<Button
+					size='md'
+					type='submit'
+					className='bg-[#252525]'
+					disabled={isSubmitting}
+				>
 					Search
 				</Button>
 			</form>
