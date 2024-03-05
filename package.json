@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.3.4",
     "@nextui-org/react": "^2.2.9",
     "@tsparticles/engine": "^3.2.2",
     "@tsparticles/react": "^3.0.0",
@@ -19,7 +20,8 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.50.1",
-    "tailwind-merge": "^2.2.1"
+    "tailwind-merge": "^2.2.1",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20",
