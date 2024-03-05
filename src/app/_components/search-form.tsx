@@ -87,7 +87,10 @@ const SearchFrom: React.FC = () => {
 				</button>
 				<div className='w-full flex flex-col gap-6'>
 					{fields.map((field, index) => (
-						<div key={field.id} className='flex flex-row gap-2 w-full'>
+						<div
+							key={field.id}
+							className='flex flex-row gap-4 w-full justify-center'
+						>
 							<div className='w-full flex flex-col gap-2'>
 								<Input
 									{...register(`players.${index}.id` as const)}
@@ -102,7 +105,7 @@ const SearchFrom: React.FC = () => {
 							<div className='flex flex-col gap-2'>
 								<Select
 									{...register(`players.${index}.role` as const)}
-									className='w-48'
+									className='w-24 md:w-48'
 									label='Role'
 								>
 									{Object.entries(Role).map(([key, value]) => (
@@ -118,17 +121,21 @@ const SearchFrom: React.FC = () => {
 								)}
 							</div>
 
-							<div className='w-36'>
-								{!!index ? (
-									<button
-										className='bg-[#252525] p-4 rounded-xl text-foreground'
-										onClick={() => remove(index)}
-										type='button'
-									>
-										Remove
-									</button>
-								) : null}
-							</div>
+							{fields.length > 1 ? (
+								<>
+									{!!index ? (
+										<button
+											className='bg-[#252525] p-4 rounded-xl text-foreground w-1/6 h-[56px]'
+											onClick={() => remove(index)}
+											type='button'
+										>
+											X
+										</button>
+									) : (
+										<div className='w-1/6 p-4'></div>
+									)}
+								</>
+							) : null}
 						</div>
 					))}
 				</div>
