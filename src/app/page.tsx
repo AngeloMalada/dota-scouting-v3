@@ -3,13 +3,18 @@ import SearchFrom from './_components/search-form';
 import { TypewriterEffectSmooth } from './_components/typewriter';
 export default async function Home() {
 	return (
-		<main className='min-h-[100vh] relative overflow-clip flex flex-col items-center justify-center p-4 md:p-24'>
+		<main className='min-h-[100vh] relative overflow-clip flex flex-col items-center justify-center p-4 md:p-24 z-0'>
 			<div className='fixed top-0'>
 				<BackgroundGradientAnimation />
 			</div>
 			<div className=' z-50 inset-0 w-full  flex flex-col items-center justify-center overflow-hidden rounded-md'>
 				<TypewriterEffectSmooth
-					words={[{ text: 'RD2L' }, { text: 'SCOUTING' }, { text: 'TOOL' }]}
+					words={[
+						{ text: 'DOTA' },
+						{ text: '2' },
+						{ text: 'SCOUTING' },
+						{ text: 'TOOL' },
+					]}
 					className='select-none'
 				/>
 				<div className='w-[40rem] h-40 relative'>
