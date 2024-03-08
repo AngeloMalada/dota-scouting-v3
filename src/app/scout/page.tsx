@@ -42,11 +42,11 @@ export default async function ScoutReport({
 		const accountIdA = a[0].accountid;
 		const accountIdB = b[0].accountid;
 
-		const orderIndexA = data.findIndex((item) =>
-			item.startsWith(`${accountIdA}-`)
+		const orderIndexA = data.findIndex(
+			(item) => item && item.startsWith(`${accountIdA}-`)
 		);
-		const orderIndexB = data.findIndex((item) =>
-			item.startsWith(`${accountIdB}-`)
+		const orderIndexB = data.findIndex(
+			(item) => item && item.startsWith(`${accountIdB}-`)
 		);
 
 		return orderIndexA - orderIndexB;
